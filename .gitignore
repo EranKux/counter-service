@@ -1,129 +1,105 @@
-# Byte-compiled / optimized / DLL files
+# Terraform
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+crash.log
+crash.*.log
+.terraform/
+.terraform.lock.hcl
+terraform.tfplan
+tfplan
+
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
-
-# C extensions
 *.so
-
-# Distribution / packaging
 .Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-pip-wheel-metadata/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
+venv/
+env/
+ENV/
+.venv
 pip-log.txt
 pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.nox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-*.py,cover
-.hypothesis/
 .pytest_cache/
+*.cover
+.coverage
+htmlcov/
 
-# Translations
-*.mo
-*.pot
+# Docker
+*.dockerignore
 
-# Django stuff:
+# Kubernetes
+kubeconfig
+*.kubeconfig
+
+# AWS
+*.pem
+*.key
+.aws/
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+.project
+.classpath
+.settings/
+*.code-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Logs
 *.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Flask stuff:
-instance/
-.webassets-cache
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.swp
+*~
 
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-.python-version
-
-# pipenv
-#   According to pypa/pipenv#598, it is recommended to include Pipfile.lock in version control.
-#   However, in case of collaboration, if having platform-specific dependencies or dependencies
-#   having no cross-platform support, pipenv may install dependencies that don't work, or not
-#   install all needed dependencies.
-#Pipfile.lock
-
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
-__pypackages__/
-
-# Celery stuff
-celerybeat-schedule
-celerybeat.pid
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
+# Secrets & Credentials (IMPORTANT!)
+secrets.yaml
+secrets.yml
+*.secret
 .env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+.env.local
+.env.*.local
+credentials.json
+service-account*.json
+github-trust-policy.json
+github-actions-policy.json
 
-# Spyder project settings
-.spyderproject
-.spyproject
+# Output files
+redis-endpoint.txt
+*.out
 
-# Rope project settings
-.ropeproject
+# Node modules (if using any JS tooling)
+node_modules/
 
-# mkdocs documentation
-/site
+# Helm
+charts/
+*.tgz
 
-# mypy
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Pyre type checker
-.pyre/
+# Build artifacts
+dist/
+build/
+*.egg-info/
