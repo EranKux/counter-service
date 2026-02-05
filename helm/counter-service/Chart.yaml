@@ -1,0 +1,13 @@
+apiVersion: v2
+name: counter-service
+description: A Helm chart for counter-service application
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - counter
+  - redis
+  - python
+  - flask
+maintainers:
+  - name: Checkpoint Team

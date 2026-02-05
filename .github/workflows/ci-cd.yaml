@@ -1,0 +1,137 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'application/**'
+      - 'helm/**'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+
+env:
+  AWS_REGION: eu-west-2
+  ECR_REPOSITORY: counter-service
+  EKS_CLUSTER_NAME: eran-counter-eks
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    
+    outputs:
+      image-tag: ${{ steps.image-tag.outputs.tag }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: Generate image tag
+      id: image-tag
+      run: |
+        SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        IMAGE_TAG="${SHORT_SHA}-$(date +%s)"
+        echo "tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+        echo "Image tag: ${IMAGE_TAG}"
+    
+    - name: Build Docker image
+      working-directory: ./Application
+      run: |
+        docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.image-tag.outputs.tag }} .
+        docker tag ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.image-tag.outputs.tag }} \
+                   ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+    
+    - name: Run security scan with Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.image-tag.outputs.tag }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+    
+    - name: Push Docker image to ECR
+      if: github.ref == 'refs/heads/main'
+      run: |
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.image-tag.outputs.tag }}
+        docker push ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+
+  deploy:
+    name: Deploy to EKS
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+    
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name ${{ env.EKS_CLUSTER_NAME }}
+    
+    - name: Get Redis endpoint from Terraform outputs
+      id: redis-endpoint
+      run: |
+        cd infrastructure
+        REDIS_ENDPOINT=$(terraform output -raw redis_endpoint || echo "redis-master")
+        echo "endpoint=${REDIS_ENDPOINT}" >> $GITHUB_OUTPUT
+    
+    - name: Deploy to EKS with Helm
+      run: |
+        helm upgrade --install counter-service ./helm/counter-service \
+          --namespace prod \
+          --create-namespace \
+          --set image.repository=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }} \
+          --set image.tag=${{ needs.build-and-push.outputs.image-tag }} \
+          --set redis.host=${{ steps.redis-endpoint.outputs.endpoint }} \
+          --set redis.port=6379 \
+          --set redis.ssl=true \
+          --wait \
+          --timeout 5m
+    
+    - name: Verify deployment
+      run: |
+        kubectl rollout status deployment/counter-service -n prod --timeout=5m
+    
+    - name: Verify deployment
+      run: |
+        kubectl get pods -n prod -l app=counter-service
+        kubectl get svc -n prod counter-service
+        kubectl get ingress -n prod counter-service
+    
+    - name: Get ALB URL
+      run: |
+        echo "Waiting for ALB to be provisioned..."
+        sleep 30
+        ALB_URL=$(kubectl get ingress counter-service -n prod -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+        echo "Application URL: http://${ALB_URL}"
+        echo "::notice title=Deployment Complete::Application is available at http://${ALB_URL}"

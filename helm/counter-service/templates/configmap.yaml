@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "counter-service.fullname" . }}-config
+  namespace: {{ .Values.namespace }}
+data:
+  redis_host: {{ .Values.redis.host | quote }}
+  redis_port: {{ .Values.redis.port | quote }}
