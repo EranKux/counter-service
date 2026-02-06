@@ -34,6 +34,7 @@ resource "aws_security_group" "redis_sg" {
     to_port         = 6379
     protocol        = "tcp"
     security_groups = [var.eks_security_group_id]
+    cidr_blocks     = var.private_subnet_cidrs
   }
 
   egress {

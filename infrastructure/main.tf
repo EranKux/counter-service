@@ -42,6 +42,7 @@ module "redis" {
   vpc_id                = module.vpc.vpc_id
   eks_security_group_id = aws_security_group.eks_nodes.id
   private_subnet_ids    = module.vpc.private_subnet_ids
+  private_subnet_cidrs  = var.private_subnet_cidrs
 }
 
 resource "aws_security_group" "eks_nodes" {

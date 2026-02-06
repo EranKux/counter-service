@@ -17,3 +17,8 @@ variable "eks_security_group_id" {
   type        = string
 }
 
+variable "private_subnet_cidrs" {
+  description = "List of private subnet CIDRs for Redis access"
+  type        = list(string)
+  default     = []
+}
