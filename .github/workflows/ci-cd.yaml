@@ -120,13 +120,14 @@ jobs:
         terraform output redis_endpoint
         echo "--- terraform output -raw redis_endpoint ---"
         terraform output -raw redis_endpoint || echo "(no value from -raw)"
-        REDIS_ENDPOINT=$(terraform output -raw redis_endpoint 2>/dev/null | tail -n 1)
+        REDIS_ENDPOINT=$(terraform output -raw redis_endpoint 2>/dev/null)
         echo "--- REDIS_ENDPOINT after assignment: '$REDIS_ENDPOINT' ---"
         if [ -z "$REDIS_ENDPOINT" ] || [[ "$REDIS_ENDPOINT" == ::debug::* ]]; then
           echo "Redis endpoint not found or invalid. Failing workflow."
           exit 1
         fi
         echo "endpoint=$REDIS_ENDPOINT" >> $GITHUB_OUTPUT
+      shell: /usr/bin/bash -e {0}
     
     - name: Ensure prod namespace exists
       run: |
