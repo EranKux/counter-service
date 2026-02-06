@@ -163,3 +163,5 @@ jobs:
         ALB_URL=$(kubectl get ingress counter-service -n prod -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
         echo "Application URL: http://${ALB_URL}"
         echo "::notice title=Deployment Complete::Application is available at http://${ALB_URL}"
+
+        
