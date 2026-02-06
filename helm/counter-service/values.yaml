@@ -1,8 +1,9 @@
 # Default values for counter-service
 replicaCount: 3
 
+
 image:
-  repository: ACCOUNT_ID.dkr.ecr.eu-west-2.amazonaws.com/counter-service
+  repository: 630943284793.dkr.ecr.eu-central-1.amazonaws.com/eran-counter-service
   pullPolicy: Always
   tag: "latest"
 
@@ -12,7 +13,7 @@ fullnameOverride: "counter-service"
 namespace: prod
 
 redis:
-  host: "REDIS_ENDPOINT_FROM_TERRAFORM"
+  host: "redis-master"
   port: "6379"
   ssl: "false"
 
