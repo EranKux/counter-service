@@ -104,7 +104,11 @@ jobs:
       id: redis-endpoint
       run: |
         cd infrastructure
-        REDIS_ENDPOINT=$(terraform output -raw redis_endpoint || echo "redis-master")
+        REDIS_ENDPOINT=$(terraform output -raw redis_endpoint)
+        if [ -z "$REDIS_ENDPOINT" ]; then
+          echo "Redis endpoint not found. Failing workflow."
+          exit 1
+        fi
         echo "endpoint=${REDIS_ENDPOINT}" >> $GITHUB_OUTPUT
     
     - name: Ensure prod namespace exists
