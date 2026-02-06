@@ -120,6 +120,9 @@ jobs:
         ls -l $TERRAFORM_CLI_PATH/terraform || true
         which terraform || true
         terraform version || true
+        echo "Current directory: $(pwd)"
+        echo "Files in current directory:"
+        ls -l
         cd infrastructure
         echo "Terraform output for redis_endpoint using full path:"
         $TERRAFORM_CLI_PATH/terraform output -raw redis_endpoint || true
