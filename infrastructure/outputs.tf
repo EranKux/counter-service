@@ -12,3 +12,8 @@ output "redis_security_group_id" {
   value       = module.redis.redis_security_group_id
   description = "Redis security group ID"
 }
+
+output "alb_controller_role_arn" {
+  value       = module.alb_controller_irsa.role_arn
+  description = "IAM role ARN for AWS Load Balancer Controller"
+}

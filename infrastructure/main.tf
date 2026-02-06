@@ -147,4 +147,11 @@ resource "aws_ecr_repository" "my_app" {
     Environment = var.environment
   }
 }
+
+module "alb_controller_irsa" {
+  source            = "./modules/alb-controller-irsa"
+  cluster_name      = var.eks_cluster_name
+  oidc_provider_url = module.eks.cluster_oidc_issuer_url
+  environment       = var.environment
+}
 #test commit
