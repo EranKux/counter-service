@@ -119,9 +119,7 @@ jobs:
           echo "Redis endpoint not found. Failing workflow."
           exit 1
         fi
-        echo "endpoint<<EOF" >> $GITHUB_OUTPUT
-        echo "$REDIS_ENDPOINT" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
+        echo "endpoint=$REDIS_ENDPOINT" >> $GITHUB_OUTPUT
     
     - name: Ensure prod namespace exists
       run: |
@@ -137,7 +135,7 @@ jobs:
           --namespace prod \
           --set image.repository=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }} \
           --set image.tag=${{ needs.build-and-push.outputs.image-tag }} \
-          --set redis.host="${{ steps.redis-endpoint.outputs.endpoint }}" \
+          --set redis.host=${{ steps.redis-endpoint.outputs.endpoint }} \
           --set redis.port=6379 \
           --set redis.ssl=true \
           --wait \
