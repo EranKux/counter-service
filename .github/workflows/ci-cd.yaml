@@ -53,7 +53,7 @@ jobs:
         echo "Image tag: ${IMAGE_TAG}"
     
     - name: Build Docker image
-      working-directory: ./Application
+      working-directory: ./application
       run: |
         docker build -t ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.image-tag.outputs.tag }} .
         docker tag ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ steps.image-tag.outputs.tag }} \
