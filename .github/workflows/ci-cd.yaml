@@ -105,6 +105,11 @@ jobs:
       with:
         terraform_version: 1.6.6
 
+    - name: Terraform Init
+      run: |
+        cd infrastructure
+        terraform init -input=false
+
     - name: Get Redis endpoint from Terraform outputs
       id: redis-endpoint
       run: |
