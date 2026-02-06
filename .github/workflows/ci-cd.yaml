@@ -107,11 +107,14 @@ jobs:
         REDIS_ENDPOINT=$(terraform output -raw redis_endpoint || echo "redis-master")
         echo "endpoint=${REDIS_ENDPOINT}" >> $GITHUB_OUTPUT
     
+    - name: Ensure prod namespace exists
+      run: |
+        kubectl get namespace prod || kubectl create namespace prod
+
     - name: Deploy to EKS with Helm
       run: |
         helm upgrade --install counter-service ./helm/counter-service \
           --namespace prod \
-          --create-namespace \
           --set image.repository=${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }} \
           --set image.tag=${{ needs.build-and-push.outputs.image-tag }} \
           --set redis.host=${{ steps.redis-endpoint.outputs.endpoint }} \
