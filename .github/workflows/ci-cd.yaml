@@ -113,20 +113,7 @@ jobs:
     - name: Get Redis endpoint from Terraform outputs
       id: redis-endpoint
       run: |
-        cd infrastructure
-        echo "PATH: $PATH"
-        echo "TERRAFORM_CLI_PATH: $TERRAFORM_CLI_PATH"
-        ls -l $TERRAFORM_CLI_PATH || true
-        ls -l $TERRAFORM_CLI_PATH/terraform || true
-        which terraform || true
-        terraform version || true
-        echo "Current directory: $(pwd)"
-        echo "Files in current directory:"
-        ls -l
-        cd infrastructure
-        echo "Terraform output for redis_endpoint using full path:"
-        $TERRAFORM_CLI_PATH/terraform output -raw redis_endpoint || true
-        REDIS_ENDPOINT=$($TERRAFORM_CLI_PATH/terraform output -raw redis_endpoint 2>/dev/null | tail -n 1)
+        REDIS_ENDPOINT=$(terraform output -raw redis_endpoint 2>/dev/null | tail -n 1)
         if [ -z "$REDIS_ENDPOINT" ] || [[ "$REDIS_ENDPOINT" == ::debug::* ]]; then
           echo "Redis endpoint not found or invalid. Failing workflow."
           exit 1
