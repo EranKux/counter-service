@@ -13,8 +13,8 @@ fullnameOverride: "counter-service"
 namespace: prod
 
 redis:
-  host: "redis-master"
-  port: "6379"
+  host: "{{ .Values.redis.endpoint }}"
+  port: "{{ .Values.redis.port }}"
   ssl: "false"
 
 service:
