@@ -115,8 +115,8 @@ jobs:
       run: |
         cd infrastructure
         echo "Terraform output for redis_endpoint:" 
-        ${TERRAFORM_CLI_PATH} output -raw redis_endpoint || true
-        REDIS_ENDPOINT=$(${TERRAFORM_CLI_PATH} output -raw redis_endpoint 2>/dev/null | tail -n 1)
+        terraform output -raw redis_endpoint || true
+        REDIS_ENDPOINT=$(terraform output -raw redis_endpoint 2>/dev/null | tail -n 1)
         if [ -z "$REDIS_ENDPOINT" ] || [[ "$REDIS_ENDPOINT" == ::debug::* ]]; then
           echo "Redis endpoint not found or invalid. Failing workflow."
           exit 1
