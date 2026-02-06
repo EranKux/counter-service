@@ -119,9 +119,8 @@ jobs:
           echo "Redis endpoint not found. Failing workflow."
           exit 1
         fi
-        echo "endpoint<<EOF" >> $GITHUB_OUTPUT
-        echo "$REDIS_ENDPOINT" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
+        ESCAPED=$(echo "$REDIS_ENDPOINT" | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g')
+        echo "endpoint=$ESCAPED" >> $GITHUB_OUTPUT
     
     - name: Ensure prod namespace exists
       run: |
