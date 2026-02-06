@@ -69,7 +69,7 @@ module "eks" {
   kubernetes_version = "1.35"
   subnet_ids = module.vpc.private_subnet_ids
   vpc_id     = module.vpc.vpc_id
-  endpoint_public_access  = false
+  endpoint_public_access  = true
   enable_irsa             = true
   eks_managed_node_groups = {
     default = {
