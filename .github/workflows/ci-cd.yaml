@@ -16,7 +16,7 @@ on:
 
 env:
   AWS_REGION: eu-central-1
-  ECR_REPOSITORY: counter-service
+  ECR_REPOSITORY: eran-counter-service
   EKS_CLUSTER_NAME: eran-counter-eks
 
 jobs:
