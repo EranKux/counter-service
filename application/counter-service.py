@@ -144,16 +144,13 @@ def metrics():
             redis_connected = 0
     
     return (
-        f"""# HELP counter_value Current counter value
-# TYPE counter_value gauge
+        f"""# Current counter value
 counter_value {counter_value}
 
-# HELP counter_requests_total Total number of requests to counter endpoint
-# TYPE counter_requests_total counter
+# Requests to counter endpoint since worker restart
 counter_requests_total {request_count}
 
-# HELP redis_connected Redis connection status (1=connected, 0=disconnected)
-# TYPE redis_connected gauge
+# Redis connection status (1=connected, 0=disconnected)
 redis_connected {redis_connected}
 """,
         200,
