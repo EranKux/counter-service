@@ -1,17 +1,34 @@
+
 # Counter Service
 
 A counter service deployed on AWS EKS with Redis persistence and CI/CD automation.
 
-## 1. Provision Infrastructure
+
+## 1. Bootstrap (State Backend) Setup
+
+Before running any Terraform commands, you must provision the S3 bucket and DynamoDB table used for storing the Terraform state and managing state locks. This is done using the `bootstrap_backend.tf` file.
+
+### Initialize the Backend Resources
+
+Run:
 
 ```bash
 cd infrastructure
+terraform init -backend=false
+terraform apply -target=aws_s3_bucket.tf_state -target=aws_dynamodb_table.tf_lock
+```
+
+This will create the S3 bucket (`counter-state-bucket`) and DynamoDB table (`counter-lock-table`) required for the remote backend.
+
+## 2. Provision Infrastructure
+
+```bash
 terraform init
 terraform apply
 aws eks update-kubeconfig --region eu-central-1 --name eran-counter-eks
 ```
 
-## 2. Install AWS Load Balancer Controller
+## 3. Install AWS Load Balancer Controller
 
 ```bash
 helm repo add eks https://aws.github.io/eks-charts
@@ -19,7 +36,7 @@ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
   -n kube-system --set clusterName=eran-counter-eks
 ```
 
-## 3. Configure Credentials
+## 4. Configure Credentials
 
 ### GitHub Actions Secret
 
@@ -35,19 +52,19 @@ kubectl annotate serviceaccount aws-load-balancer-controller \
 kubectl rollout restart deployment aws-load-balancer-controller -n kube-system
 ```
 
-## 4. Install Metrics Server (for HPA)
+## 5. Install Metrics Server (for HPA)
 
 ```bash
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 ```
 
-## 5. Run Pipeline
+## 6. Run Pipeline
 
 Pipeline triggers automatically on push to `main` (application/, helm/, .github/workflows/).
 
 Manual: GitHub → Actions → CI/CD Pipeline → Run workflow
 
-## 6. Test
+## 7. Test
 
 ```bash
 # Get ALB URL
