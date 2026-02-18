@@ -1,0 +1,10 @@
+variable "eks_cluster_name" {}
+variable "node_group_min_size" {}
+variable "node_group_max_size" {}
+variable "node_group_desired_size" {}
+variable "node_instance_type" {}
+variable "vpc_id" {}
+variable "private_subnet_ids" {}
+variable "environment" {}
+variable "eks_node_group_iam_role_arn" {}
+variable "eks_nodes_sg_id" {}

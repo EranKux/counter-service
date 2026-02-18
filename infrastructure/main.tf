@@ -2,6 +2,8 @@ provider "aws" {
   region = var.region
 }
 
+provider "cloudinit" {}
+
 module "vpc" {
   source               = "./modules/vpc"
   vpc_cidr             = var.vpc_cidr
@@ -64,37 +66,17 @@ resource "aws_security_group" "eks_nodes" {
 }
 
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = "21.15.1"
-  name            = var.eks_cluster_name
-  kubernetes_version = "1.35"
-  subnet_ids = module.vpc.private_subnet_ids
-  vpc_id     = module.vpc.vpc_id
-  endpoint_public_access  = true
-  enable_irsa             = true
-  eks_managed_node_groups = {
-    default = {
-      min_size       = var.node_group_min_size
-      max_size       = var.node_group_max_size
-      desired_size   = var.node_group_desired_size
-      subnet_ids     = module.vpc.private_subnet_ids
-      instance_types = [var.node_instance_type]
-      capacity_type  = "ON_DEMAND"
-      iam_role_arn   = aws_iam_role.eks_node_group.arn
-      ami_type       = "AL2023_x86_64_STANDARD"
-      additional_security_group_ids = [aws_security_group.eks_nodes.id]
-      update_config = {
-        max_unavailable_percentage = 33
-      }
-      tags = {
-        Environment = var.environment
-        Terraform   = "true"
-      }
-    }
-  }
-  upgrade_policy = {
-    support_type = "STANDARD"
-  }
+  source                     = "./modules/eks"
+  eks_cluster_name           = var.eks_cluster_name
+  node_group_min_size        = var.node_group_min_size
+  node_group_max_size        = var.node_group_max_size
+  node_group_desired_size    = var.node_group_desired_size
+  node_instance_type         = var.node_instance_type
+  vpc_id                     = module.vpc.vpc_id
+  private_subnet_ids         = module.vpc.private_subnet_ids
+  environment                = var.environment
+  eks_node_group_iam_role_arn = aws_iam_role.eks_node_group.arn
+  eks_nodes_sg_id            = aws_security_group.eks_nodes.id
 }
 
   resource "aws_iam_role" "eks_node_group" {
@@ -154,4 +136,4 @@ module "alb_controller_irsa" {
   oidc_provider_url = module.eks.cluster_oidc_issuer_url
   environment       = var.environment
 }
-#test commit 
+#test commit
