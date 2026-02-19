@@ -1,5 +1,5 @@
 # Default values for counter-service
-replicaCount: 3
+replicaCount: 1
 
 
 image:
@@ -49,8 +49,8 @@ resources:
 
 autoscaling:
   enabled: true
-  minReplicas: 3
-  maxReplicas: 10
+  minReplicas: 1
+  maxReplicas: 3
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 80
   behavior:
@@ -72,7 +72,7 @@ autoscaling:
 
 podDisruptionBudget:
   enabled: true
-  minAvailable: 2
+  minAvailable: 1
 
 podAnnotations:
   prometheus.io/scrape: "true"
