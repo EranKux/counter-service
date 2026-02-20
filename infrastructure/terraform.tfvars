@@ -15,33 +15,6 @@ azs = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]                       # Availab
 vpc_name = "eran-counter_vpc"           # VPC name
 
 # =============================
-# ALB Configuration
-# =============================
-
-
-alb_name = "eran-counter-alb"           # ALB name
-alb_internal = false                    # ALB is public
-alb_security_groups = []                # ALB security groups
-alb_enable_deletion_protection = false  # ALB deletion protection
-alb_tags = { Name = "eran-counter-alb" }# ALB tags
-
-alb_target_group_name = "eran-counter-tg"      # Target group name
-alb_target_group_port = 80                     # Target group port
-alb_target_group_protocol = "HTTP"             # Target group protocol
-alb_target_type = "ip"                         # Target type
-
-alb_health_check_path = "/"                    # Health check path
-alb_health_check_protocol = "HTTP"             # Health check protocol
-alb_health_check_matcher = "200-399"           # Health check matcher
-alb_health_check_interval = 30                 # Health check interval (seconds)
-alb_health_check_timeout = 5                   # Health check timeout (seconds)
-alb_health_check_healthy_threshold = 2         # Healthy threshold
-alb_health_check_unhealthy_threshold = 2       # Unhealthy threshold
-
-alb_listener_port = 80                         # Listener port
-alb_listener_protocol = "HTTP"                 # Listener protocol
-
-# =============================
 # ECR Configuration
 # =============================
 ecr_repository_name = "eran-counter-service"   # ECR repository name

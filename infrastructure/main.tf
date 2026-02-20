@@ -14,30 +14,6 @@ module "vpc" {
   environment          = var.environment
 }
 
-module "alb" {
-  source                     = "./modules/alb"
-  name                       = var.alb_name
-  internal                   = var.alb_internal
-  security_groups            = [module.vpc.alb_default_sg_id]
-  subnets                    = module.vpc.public_subnet_ids
-  enable_deletion_protection = var.alb_enable_deletion_protection
-  tags                       = var.alb_tags
-  target_group_name                = var.alb_target_group_name
-  target_group_port                = var.alb_target_group_port
-  target_group_protocol            = var.alb_target_group_protocol
-  vpc_id                           = module.vpc.vpc_id
-  target_type                      = var.alb_target_type
-  health_check_path                = var.alb_health_check_path
-  health_check_protocol            = var.alb_health_check_protocol
-  health_check_matcher             = var.alb_health_check_matcher
-  health_check_interval            = var.alb_health_check_interval
-  health_check_timeout             = var.alb_health_check_timeout
-  health_check_healthy_threshold   = var.alb_health_check_healthy_threshold
-  health_check_unhealthy_threshold = var.alb_health_check_unhealthy_threshold
-  listener_port                    = var.alb_listener_port
-  listener_protocol                = var.alb_listener_protocol
-}
-
 module "redis" {
   source                = "./modules/redis"
   environment           = var.environment

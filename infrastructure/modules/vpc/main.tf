@@ -77,31 +77,6 @@ resource "aws_route_table_association" "private" {
   route_table_id = aws_route_table.private.id
 }
 
-resource "aws_security_group" "alb_default" {
-  name        = "alb-default-sg"
-  description = "Default security group for ALB"
-  vpc_id      = aws_vpc.main.id
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-  tags = {
-    Name = "alb-default-sg"
-    Environment = var.environment
-  }
-}
-output "alb_default_sg_id" {
-  value = aws_security_group.alb_default.id
-}
-
 output "public_subnet_ids" {
   value = [for s in aws_subnet.public : s.id]
 }
